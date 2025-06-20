@@ -12,8 +12,9 @@ export class UserService {
     });
   }
 
-  async deleteById(id: string) {
-    return this.prismaService.user.delete({ where: { id } });
+  async deleteById(id: string): Promise<void> {
+    await this.prismaService.user.delete({ where: { id } });
+    return;
   }
 
   async findUserByEmail(
