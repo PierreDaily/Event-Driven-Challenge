@@ -48,6 +48,19 @@ describe('UserService', () => {
       await expect(userService.createUser('test@test.com')).rejects.toThrow();
     });
   });
+  describe('delete method', () => {
+    it('should call prisma service to delete a user entity with the corresponding id', async () => {
+      await userService.deleteById('mock-uuid');
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(prismaMock.user.delete).toHaveBeenCalledWith({
+        where: { id: 'mock-uuid' },
+      });
+    });
+    it('should throw an error if  prisma service throw an error', async () => {
+      prismaMock.user.delete.mockRejectedValueOnce(new Error());
+      await expect(userService.deleteById('mock-uuid')).rejects.toThrow();
+    });
+  });
 
   describe('findByEmail method', () => {
     it('should return the user from prisma service', async () => {
