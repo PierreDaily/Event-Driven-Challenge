@@ -3,13 +3,11 @@ import {
   Controller,
   Get,
   Post,
-  ConflictException,
   UsePipes,
   NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ZodValidationPipe } from 'nestjs-zod';
-import { CreateUserDto } from './user.dto';
+import { type CreateUserDto, UserValidationPipe } from './validationPipe';
 
 @Controller('user')
 export class UserController {
@@ -22,15 +20,9 @@ export class UserController {
       throw new NotFoundException(`User with email ${email} doesn't exist`);
     return user;
   }
-
   @Post()
-  @UsePipes(ZodValidationPipe)
+  @UsePipes(UserValidationPipe)
   async createUser(@Body() body: CreateUserDto) {
-    const user = await this.userService.findUserByEmail(body.email);
-    if (user)
-      throw new ConflictException(
-        `User with email ${body.email} already exist`,
-      );
     return this.userService.createUser(body.email);
   }
 }
